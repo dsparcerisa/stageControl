@@ -1,0 +1,9 @@
+sigma=2;
+pause
+linearstage(s2,2,-1,sigma)
+pause
+linearstage(s2,3,-1,sigma)
+pause
+linearstage(s2,2,1,sigma)
+pause
+linearstage(s2,3,1,sigma)
