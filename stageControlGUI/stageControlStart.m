@@ -1,8 +1,24 @@
+function stageControlStart()
 %% Close all elements
 clear all
 close all
 instrreset
-
+%% Read port name
+opts = delimitedTextImportOptions("NumVariables", 1);
+% Specify range and delimiter
+opts.DataLines = [1, 2];
+opts.Delimiter = ",";
+% Specify column names and types
+opts.VariableNames = "velmexPort";
+opts.VariableTypes = "string";
+opts = setvaropts(opts, 1, "WhitespaceRule", "preserve");
+opts = setvaropts(opts, 1, "EmptyFieldRule", "auto");
+opts.ExtraColumnsRule = "ignore";
+opts.EmptyLineRule = "read";
+% Import the data
+velmexPort = readtable("velmexPort.info", opts);
+velmexport = table2array(velmexPort);
+clear opts
 %% Connect
 % arduinoport='/dev/tty.usbserial-A9EUCR0N'; % for shutter
 velmexport='/dev/tty.usbserial-AH061E3D'; % for stages
@@ -40,3 +56,4 @@ end
 
 %% Open instance of stageControl
 stageControl_exported.getInstance(s2);
+end
