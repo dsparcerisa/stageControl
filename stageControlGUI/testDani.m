@@ -1,5 +1,6 @@
 %% First tests with linear stage
 clear all
+close all
 instrreset
 
 %% Connect
@@ -27,9 +28,9 @@ if  ~exist('s2') ||  strcmp(s2.Status,'closed')
     
     % Initialize stage
     disp('Initializing')
-    fprintf(s2,'F,C,setM1M3,S1M6000,A1M1,setL1M1,R');
-    fprintf(s2,'F,C,setM2M3,S2M6000,A2M1,setL2M1,R');
-    fprintf(s2,'F,C,setM3M3,S3M6000,A3M1,setL3M1,R');
+    fprintf(s2,'F,C,setM1M3,S1M6000,A1M50,setL1M1,R');
+    fprintf(s2,'F,C,setM2M3,S2M6000,A2M50,setL2M1,R');
+    fprintf(s2,'F,C,setM3M3,S3M6000,A3M50,setL3M1,R');
     
     readStatus(s2);
     
@@ -41,16 +42,16 @@ end
 stageControl(s2);
 
 % %% 
-searchr = 0;
- 
-while searchr==0
-    searchr=input('Finished moving? (0 No, 1 Yes): ');
-    if searchr==0
-        motor=input('Motor? (1 (Z), 2 (X), 3 (Y)): ');
-        distance=input('Distance (mm)? (include sing)');
-        stepsZ=linearstage(s2,motor,sign(distance),abs(distance));
-    end
-end
+% searchr = 0;
+%  
+% while searchr==0
+%     searchr=input('Finished moving? (0 No, 1 Yes): ');
+%     if searchr==0
+%         motor=input('Motor? (1 (Z), 2 (X), 3 (Y)): ');
+%         distance=input('Distance (mm)? (include sing)');
+%         stepsZ=linearstage(s2,motor,sign(distance),abs(distance));
+%     end
+% end
 
 % %% Where am I
 %     
