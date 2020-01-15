@@ -7,6 +7,8 @@ function motorResponse = readStatus(s2, in)
     if s2.BytesAvailable>0
         motorResponse = fscanf(s2,'%c',s2.BytesAvailable);
         motorResponse = motorResponse(motorResponse~='^');
+    else
+        motorResponse = '';
     end
 end
 
