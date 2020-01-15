@@ -11,17 +11,17 @@ if app.isWithinLimits(position)
     deltaZ_mm = 10*(position(3) - currentPos(3));
     if deltaX_mm ~= 0
         %tic
-        linearstage(app.getPort,2,sign(deltaX_mm),abs(deltaX_mm))
+        linearstage(app.getPort,1,sign(deltaX_mm),abs(deltaX_mm))
         %toc
     end
     if deltaY_mm ~= 0        
         %tic;
-        linearstage(app.getPort,3,sign(deltaY_mm),abs(deltaY_mm))
+        linearstage(app.getPort,2,sign(deltaY_mm),abs(deltaY_mm))
         %toc;
     end
     if deltaZ_mm ~= 0        
         %tic;
-        linearstage(app.getPort,1,sign(deltaZ_mm),abs(deltaZ_mm))
+        linearstage(app.getPort,3,sign(deltaZ_mm),abs(deltaZ_mm))
         %toc;
     end
     app.updatePosition(position);
