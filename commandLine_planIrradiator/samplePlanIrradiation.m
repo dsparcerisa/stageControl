@@ -20,7 +20,7 @@ plan.t_s = plan.Q ./ I_muestra_nA / 1000;
 
 %% Center stage
 autoCenter(s2);   
-[~, ~, ~, Zpos] = monitorStatus(COM);
+[~, ~, ~, Zpos] = monitorStatus(s2);
 
 %% Align in Z position
 % align manually and then set here
@@ -29,10 +29,10 @@ Zpos = 0;
 %% Irradiate plan
 tic
 for i=1:numel(plan.X)
-    abspos = [plan.X(i) plan.Y(i) Zpos];
+    absPos = [plan.X(i) plan.Y(i) Zpos];
     finished = stageControl_moveToAbsPos(s2, absPos);
-    finished = ConfigureShutter(s1,'t',plan.t_s(i));
-    finished = Shutter(s1,'n');
+    Configure_shutter(s1,'t',plan.t_s(i));
+    Shutter(s1,'n',1);
     fprintf('Irradiated spot %i\n', i);
 end
 toc

@@ -2,32 +2,17 @@
 
 %% Connect
 % arduinoport='/dev/tty.usbserial-A9EUCR0N'; % for shutter
-arduinoport='/dev/tty.usbserial-14340'; % for shutter
+arduinoport='/dev/tty.usbserial-14320'; % for shutter
 velmexport='/dev/tty.usbserial-AH061E3D'; % for stages
 
 % 1. Connect
 
-if exist('s1') 
-else
-    s1 = serial(arduinoport,'BaudRate',9600);
-end
-
-if strcmp(s1.Status,'closed')
+if  ~exist('s1') || ~exist('s2') ||  strcmp(s2.Status,'closed') || strcmp(s1.Status,'closed')
     instrreset
-    
     s1 = serial(arduinoport,'BaudRate',9600);
-    
-    fopen(s1); disp('Shutter connected');
-        
-end
-
-if  ~exist('s2') ||  strcmp(s2.Status,'closed')
-    instrreset
-    
-    % s1 = serial(arduinoport,'BaudRate',9600);
     s2 = serial(velmexport,'BaudRate',9600);
     
-    % fopen(s1); disp('Shutter connected');
+    fopen(s1); disp('Shutter connected');
     fopen(s2); disp('Stages connected');
     
     fprintf(s2,'V');
