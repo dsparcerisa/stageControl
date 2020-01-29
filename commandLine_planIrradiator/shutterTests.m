@@ -1,7 +1,8 @@
 % Shutter tests
 
 % 1. Connect
-arduinoport='/dev/tty.usbserial-14340'; % for shutter
+% arduinoport='/dev/tty.usbserial-14340'; % for shutter
+arduinoport='/dev/tty.usbserial-14320'; % for shutter
 
 if exist('s1') 
 else
