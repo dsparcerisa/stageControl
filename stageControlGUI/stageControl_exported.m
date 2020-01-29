@@ -326,8 +326,10 @@ classdef stageControl_exported < matlab.apps.AppBase
 
         % Button pushed function: ZerohereButton
         function ZerohereButtonPushed(app, event)
+            readStatus(app.velmexPort, 'N');
             app.logLine('Position zeroed without moving stage.')
             app.updatePosition([0 0 0]);
+            app.autoMonitorStatus
         end
 
         % Button pushed function: ZButton_plus
