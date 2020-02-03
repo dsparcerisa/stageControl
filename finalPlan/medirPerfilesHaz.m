@@ -22,12 +22,69 @@ X_2_poc00 = [9.55 6.3 0];
 poc00_2_PlateCtr = [-0.899*5.5 -0.899*3.5 0];
 
 % ASPA al centro de la placa:
-X_2_PlateCtr = X2poc00 + poc00toplateCtr;
+X_2_PlateCtr = X_2_poc00 + poc00_2_PlateCtr;
+
+%% COMMISSIONING DE PLAN FLASH
 
 %% Cargar el plan de medida de haces:
 commissioningPlanFlashPath = 'plans/plan_COM_Flash.txt';
 commissioningPlanFlash = readPlan(commissioningPlanFlashPath);
 
+%% Simular plan y crear radiocrómica de prueba
+dxy = 0.01;
+sizeX = 30;
+sizeY = 30;
+doseCanvas = createEmptyCG2D(dxy, sizeX, sizeY);
+dz = 0.01;
+targetTh = 0.001;
+targetSPR = 1;
+sigmaXY = 0.1;
+N0 = createGaussProfile(dxy, dxy, sizeX, sizeY, sigmaXY, sigmaXY);
+factorImuestra = 0.86; % Estimación para 3 MeV
+dosePlanFlash = getDoseFromPlan(doseCanvas, commissioningPlanFlash, dz, targetTh, targetSPR, N0, factorImuestra, beamExit2WellBottomDistance);
+dosePlanFlash.crop([-5 5 -4 4]);
+%% Plot
+subplot(2,1,1);
+dosePlanFlash.plotSlice
+colorbar
+title('Dose distribution FLASH (Gy)');
+subplot(2,1,2);
+imshow(simulateRC(dosePlanFlash.data'));
+title('Expected RC film');
+%% Irradiar plan
+stageLimits = [-5 5 -5 5 -7.5 0]; 
 tic
-irradiatePlan(COMStage, COMShutter, plan, globalVector)
+irradiatePlan(COMStage, COMShutter, commissioningPlanFlash, X_2_PlateCtr, stageLimits, beamExit2WellBottomDistance)
+toc
+
+%% COMMISSIONING DE PLAN CONV
+%% Cargar el plan de medida de haces:
+commissioningPlanConvPath = 'plans/plan_COM_Conv.txt';
+commissioningPlanConv = readPlan(commissioningPlanConvPath);
+
+dxy = 0.01;
+sizeX = 30;
+sizeY = 30;
+doseCanvas = createEmptyCG2D(dxy, sizeX, sizeY);
+dz = 0.01;
+targetTh = 0.001;
+targetSPR = 1;
+sigmaXY = 0.01; % Agujero de 100 um
+N0 = createGaussProfile(dxy, dxy, sizeX, sizeY, sigmaXY, sigmaXY);
+factorImuestra = 0.86; % Estimación para 3 MeV
+dosePlanConv = getDoseFromPlan(doseCanvas, commissioningPlanConv, dz, targetTh, targetSPR, N0, factorImuestra, beamExit2WellBottomDistance);
+dosePlanConv.crop([-5 5 -4 4]);
+
+%% Plot
+subplot(2,1,1);
+dosePlanConv.plotSlice
+colorbar
+title('Dose distribution CONV (Gy)');
+subplot(2,1,2);
+imshow(simulateRC(dosePlanConv.data'));
+title('Expected RC film');
+
+%% Perform plan irradiation
+tic
+irradiatePlan(COMStage, COMShutter, commissioningPlanConv, X_2_PlateCtr, stageLimits, beamExit2WellBottomDistance)
 toc
