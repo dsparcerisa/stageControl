@@ -2,33 +2,34 @@
 
 %% Connect
 % arduinoport='/dev/tty.usbserial-A9EUCR0N'; % for shutter
-arduinoport='/dev/tty.usbserial-14320'; % for shutter
+%arduinoport='/dev/tty.usbserial-14320'; % for shutter
+arduinoport='/dev/tty.usbserial-14330'; % for shutter
 velmexport='/dev/tty.usbserial-AH061E3D'; % for stages
 
 % 1. Connect
 
-if  ~exist('s1') || ~exist('s2') ||  strcmp(s2.Status,'closed') || strcmp(s1.Status,'closed')
+if  ~exist('s1') || ~exist('s2') ||  strcmp(COMstage.Status,'closed') || strcmp(COMshutter.Status,'closed')
     instrreset
-    s1 = serial(arduinoport,'BaudRate',9600);
-    s2 = serial(velmexport,'BaudRate',9600);
+    COMshutter = serial(arduinoport,'BaudRate',9600);
+    COMstage = serial(velmexport,'BaudRate',9600);
     
-    fopen(s1); disp('Shutter connected');
-    fopen(s2); disp('Stages connected');
+    fopen(COMshutter); disp('Shutter connected');
+    fopen(COMstage); disp('Stages connected');
     
-    fprintf(s2,'V');
+    fprintf(COMstage,'V');
     pause(.1); % wait for 100ms
     
     % see if the controller connected properly
-    readStatus(s2);
+    readStatus(COMstage);
     
     % Initialize stage
     disp('Initializing at speed 6000 and acceleration 50')
-    fprintf(s2,'F,C,setM1M3,S1M6000,A1M50,setL1M1,R');
-    fprintf(s2,'F,C,setM2M3,S2M6000,A2M50,setL2M1,R');
-    fprintf(s2,'F,C,setM3M3,S3M6000,A3M50,setL3M1,R');
+    fprintf(COMstage,'F,C,setM1M3,S1M6000,A1M50,setL1M1,R');
+    fprintf(COMstage,'F,C,setM2M3,S2M6000,A2M50,setL2M1,R');
+    fprintf(COMstage,'F,C,setM3M3,S3M6000,A3M50,setL3M1,R');
     
-    readStatus(s2);
+    readStatus(COMstage);
     
-    set(s2,'Timeout',30);
+    set(COMstage,'Timeout',30);
     
 end

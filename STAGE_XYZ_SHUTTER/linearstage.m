@@ -29,16 +29,18 @@ function [steps] = linearstage(COM,id,direction,distance)
     fprintf(1,'Moving stage #%d: %d steps %f mm, direction: %d\n',id,steps,distance,direction);
     command=strcat('C,I',num2str(id),'M',strdir,num2str(steps),',R');%Set steps to move (2.5 mm / 1000 steps)
     fprintf(COM,command);
-    if id==1
-        savezpos(direction,steps);
-    elseif id==2 
-        savexpos(direction,steps);
-    elseif id==3 
-        saveypos(direction,steps);
-    else
-        id
-        disp('Wrong stage ID');
-    end
+
+    %% Save X positions
+%     if id==1
+%         savezpos(direction,steps);
+%     elseif id==2 
+%         savexpos(direction,steps);
+%     elseif id==3 
+%         saveypos(direction,steps);
+%     else
+%         id
+%         disp('Wrong stage ID');
+%     end
     %fprintf(COM,'C,V,R'); 
     status='';
     nstatus=0;
