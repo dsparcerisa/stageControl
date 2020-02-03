@@ -2,8 +2,10 @@
 
 % 1. Connect
 %arduinoport='/dev/tty.usbserial-14340'; % for shutter
-arduinoport='/dev/cu.usbserial-14340'; % for shutter
+%arduinoport='/dev/cu.usbserial-14340'; % for shutter
 %arduinoport='/dev/tty.usbserial-14320'; % for shutter
+arduinoport='/dev/tty.usbserial-14130'; % for shutter
+
 %arduinoport='COM12' % Para windows?
 %%rduinoport='??' % Para Unix: hacer ls /dev y buscar cual es, o con instrfind en matlab
 
