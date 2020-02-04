@@ -46,10 +46,11 @@ dosePlanFlash.crop([-5 5 -4 4]);
 %% Plot
 subplot(2,1,1);
 dosePlanFlash.plotSlice
+set(gca,'YDir','reverse','XDir','reverse');
 colorbar
 title('Dose distribution FLASH (Gy)');
 subplot(2,1,2);
-imshow(simulateRC(dosePlanFlash.data'));
+imshow(simulateRC(flip(dosePlanFlash.data',2)));
 title('Expected RC film');
 %% Irradiar plan
 stageLimits = [-5 5 -5 5 -7.5 0]; 
@@ -78,13 +79,14 @@ dosePlanConv.crop([-5 5 -4 4]);
 %% Plot
 subplot(2,1,1);
 dosePlanConv.plotSlice
+set(gca,'YDir','reverse','XDir','reverse');
 colorbar
 title('Dose distribution CONV (Gy)');
 subplot(2,1,2);
-imshow(simulateRC(dosePlanConv.data'));
+imshow(simulateRC(flip(dosePlanConv.data',2)));
 title('Expected RC film');
 
-%% Perform plan irradiation
+%% Perform plan irradiation (x2!)
 tic
 irradiatePlan(COMStage, COMShutter, commissioningPlanConv, X_2_PlateCtr, stageLimits, beamExit2WellBottomDistance)
 toc
