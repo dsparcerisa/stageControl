@@ -40,7 +40,7 @@ doseSigma = F.c1 / sqrt(2);
 %% Create plan
 deltaXY = doseSigma * 2;
 I_FC1 = 0.050; % 50 pA
-I_factor = 0.86;
+I_factor = 0.76;
 PP_factor = 1; % (10/250)^2; % PRUEBA
 I_muestra = I_FC1 * I_factor * PP_factor; % nA
 
@@ -76,7 +76,7 @@ wells = {};
 
 % Positions in reference with the center of the first spot
 Xpos = well2wellDist_cm*(0:(-1):(-11));
-Ypos = well2wellDist_cm*(0:7);
+Ypos = well2wellDist_cm*(0:(-1):(-7));
 [x,y] = meshgrid(Xpos, Ypos);
 
 Xwells = x(~isnan(plateDose(:)));

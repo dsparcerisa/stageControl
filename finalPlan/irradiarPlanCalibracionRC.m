@@ -1,26 +1,28 @@
 % Utilizar instrumentos ya conectados o abrirlos a mano con openInstruments
 
 %% Abrir la GUI
-stageControlStart(COMStage);
+%% stageControlStart(COMStage);
 
-stageLimits = [-9.8 0.3 -0.3 9.8 -7.5 0]; % DEFINE!!
+stageLimits = [-10.3 0.3 -9.9 0.7 -8 0]; % Definidos 5 Feb 11:30!
 
 %% Alinear en posición 0 y medir la distancia (ANOTAR!)
-beamExit2RCdistance = input('Measure distance between beam exit and well edge (cm): ');
+beamExit2RCdistance = input('Measure distance between beam exit and RC(cm): ');
 
 %% Alinear manualmente con el aspa y la lámina radioluminiscente;
-disp('Press any key when beam is on');
-Configure_shutter(COMShutter,'t',10);
-Shutter(COMShutter,'n',10);
+% disp('Press any key when beam is on');
+% Configure_shutter(COMShutter,'t',10);
+% Shutter(COMShutter,'n',10);
 
 %% When beam is in position, continue
-readStatus(COMStage, 'N'); % Set zero position here
+% readStatus(COMStage, 'N'); % Set zero position here
 
 % Pocillo 0,0 desde el ASPA:
-X_2_poc00 = [9.55 6.3 0]; 
+% X_2_poc00 = [9.55 6.3 0]; 
 
 %% Cargar el plan de calibración de RC;
 RCCalibrationPlanPath = 'plans/plan_calibrationRC.txt';
+%RCCalibrationPlanPath = 'plans/plan_calibrationRCx10.txt';
+%RCCalibrationPlanPath = 'plans/plan_calibrationRC_media.txt';
 RCCalibrationPlan = readPlan(RCCalibrationPlanPath);
 
 %% Simular plan y crear radiocrómica de prueba
@@ -33,9 +35,9 @@ targetTh = 0.001;
 targetSPR = 1;
 sigmaXY = 0.1;
 N0 = createGaussProfile(dxy, dxy, sizeX, sizeY, sigmaXY, sigmaXY);
-factorImuestra = 0.86; % Estimación para 3 MeV
+factorImuestra = 0.76; % Estimación para 3 MeV
 dosePlanRC = getDoseFromPlan(doseCanvas, RCCalibrationPlan, dz, targetTh, targetSPR, N0, factorImuestra, beamExit2RCdistance);
-dosePlanRC.crop([-11 1 -1 8]);
+dosePlanRC.crop([-11 1 -8 1]);
 %% Plot
 subplot(2,1,1);
 dosePlanRC.plotSlice
@@ -47,7 +49,6 @@ imshow(simulateRC(flip(dosePlanRC.data',2)));
 title('Expected RC film');
 
 %% Irradiar plan
-COMStage = []; COMShutter = [];
 tic
-irradiatePlan(COMStage, COMShutter, RCCalibrationPlan, X_2_poc00, stageLimits, beamExit2RCdistance)
+irradiatePlan(COMStage, COMShutter, RCCalibrationPlan, [0 0 0], stageLimits, beamExit2RCdistance)
 toc

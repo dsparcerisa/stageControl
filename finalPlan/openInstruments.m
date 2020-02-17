@@ -1,6 +1,6 @@
 %% 1. Open and test instruments
-
-arduinoport='/dev/tty.usbserial-14320'; % for shutter
+clear COMShutter COMStage
+arduinoport='/dev/tty.usbserial-14330'; % for shutter
 velmexport='/dev/tty.usbserial-AH061E3D'; % for stages
 
 if  ~exist('COMStage') || ~exist('COMShutter') ||  strcmp(COMStage.Status,'closed') || strcmp(COMShutter.Status,'closed')
@@ -30,7 +30,8 @@ if  ~exist('COMStage') || ~exist('COMShutter') ||  strcmp(COMStage.Status,'close
 end
 
 %% Test shutter
+pause(1);
 Shutter(COMShutter, 'f', 1)
 
 %% Test stage
-[stageStatus, posX, posY, posZ] = monitorStatus(COMStage);
+[stageStatus, posX, posY, posZ] = monitorStatus(COMStage)

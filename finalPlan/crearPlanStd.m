@@ -1,17 +1,36 @@
-clear all; close all
+clearvars -except COMStage COMShutter
+%%
+modo = 1; % 1) placa, 2) cubeta
 
-modo = 2; % 1) placa, 2) cubeta
+% sigmaPoly_sinPP = [0.0097 0.24 0]; % settings 5 feb
+% sigmaPoly_sinPP = [0.0097 0.24 0]; % settings 5 feb
+
+% sigmaPoly_conPP = [0 0.26 0.63]; % settings 5 feb
+sigmaPoly_conPP = [0 0.24 0.76]; % settings 6 feb
+
 
 %% Abrir la GUI
-stageControlStart(COMStage);
+% stageControlStart(COMStage);
 
 %% Alinear en posición 0 y medir la distancia (ANOTAR!)
 if modo==1 % placa
-    beamExit2WellDistance = input('Measure distance between beam exit and well edge (cm): ');
-    beamExit2WellBottomDistance = beamExit2WellDistance + 1.1;
+    %beamExit2WellDistance = input('Measure distance between beam exit and well edge (cm): ');
+    beamExit2WellDistance = 0.6 + 2.7 + 0.2;
+    beamExit2WellBottomDistance = beamExit2WellDistance + 1.1; % Settings 6 feb
 elseif modo==2 % cubeta
-    distanciaAFondoCubeta = input('Distancia de la salida del haz al FONDO de la cubeta (cm): ');
+    % distanciaAFondoCubeta = input('Distancia de la salida del haz al FONDO de la cubeta (cm): ');
+    distanciaAFondoCubeta = 0.6 + 2.7 + 0.5 + 0.8; % Settings 6 Feb
 end
+
+% DISTANCIAS:
+% Nariz-shutter: 6 mm;
+% Anchura shutter: 27 mm;
+% PLACAS
+% Shutter-inicio pocillo: 2mm;
+% 1.1 hasta el fondo del pocillo
+% CUBETAS
+% 0.5 cm hasta el borde del soporte azul
+% 0.8 cm más hasta el fondo de la cubeta.
 
 %% Plate
 if modo==1 % placa
@@ -30,6 +49,7 @@ end
 
 showPlate(plateDose)
 title('CONV');
+
 %% Create dose slice
 E0 = 3;
 z = 10;
@@ -40,34 +60,35 @@ targetTh = 0.001; % 10 um = 10^-5 m = 10^-3 cm
 targetSPR = 1;
 sizeX = 30;
 sizeY = 30;
-sigmaX = 0.1; % REVISAR
-sigmaY = 0.1; % REVISAR
+sigmaX = 0.001; % REVISAR
+sigmaY = 0.001; % REVISAR
 N0 = createGaussProfile(dxy, dxy, sizeX, sizeY, sigmaX, sigmaY);
-doseSlice = getDoseMap(E0, z, dz, Nprot, targetTh, targetSPR, N0);
-
-%% Find real sigma of doseSlice
+doseSlice = getDoseMap(E0, z, dz, Nprot, targetTh, targetSPR, N0, sigmaPoly_conPP);
 Xsum = sum(doseSlice.data, 2);
 F = fit((doseSlice.getAxisValues('X'))', Xsum, 'gauss1', 'StartPoint', [max(Xsum) 0 1]);
 doseSigma = F.c1 / sqrt(2);
 
 %% Create plan
-deltaXY = doseSigma * 2.1;
-I_FC1 = 2.1; % nA
-I_factor = 0.86;
-PP_factor = 6.7e-4; % PP100
+deltaXY = doseSigma * 1.9;
+I_FC1 = 0.076; % nA
+I_factor = 0.76;
+PP_factor = 0.04; % PP2capas
 I_muestra = I_FC1 * I_factor * PP_factor; % nA
-
-[plan, totIrrTime, doseRate] = createStdIrrPlan( plateDose, doseSlice, I_muestra, deltaXY, 4);
+if modo==1
+    [plan, totIrrTime, doseRate] = createStdIrrPlan( plateDose, doseSlice, I_muestra, deltaXY, 4);
+else
+    [plan, totIrrTime, doseRate] = createStdIrrPlan( plateDose, doseSlice, I_muestra, deltaXY, 1); 
+end
 fprintf('Total irradiation time in min: %f\n', totIrrTime/60);
 fprintf('Dose rate: %f Gy/s\n', doseRate);
 
 if modo==1 % Plate
     plan.name = 'CONV Placa';
 else % Cubeta
-    plan.name = 'FLASH Cubeta';
+    plan.name = 'CONV Cubeta';
 end
 plan.mode = 'CONV';
-plan.codFiltro = 'PP100';
+plan.codFiltro = 'PP2capas';
 plan.E = E0;
 
 if modo==1
@@ -78,7 +99,7 @@ else
     plan.Z = -(z-distanciaAFondoCubeta)*ones(size(plan.X));
 end
 
-plan.I = I_FC1;
+plan.I = I_FC1
 scatter(plan.X(:), plan.Y(:), 100, plan.Q(:))
 set(gca, 'XDir', 'reverse', 'YDir', 'reverse');
 
@@ -94,9 +115,9 @@ set(gca, 'Ydir', 'reverse', 'Xdir', 'reverse')
 
 %% Save plan
 if (modo==1)
-    writePlan(plan, 'plans/plan_CONV_plate.txt');
+    writePlan(plan, 'plans/plan_CONV_feb6_V2_placa.txt'); % Z = 10, 80 pA
 else
-    writePlan(plan, 'plans/plan_CONV_cubeta.txt');
+    writePlan(plan, 'plans/plan_CONV_feb6_V2_cubeta.txt');
 end
 
 %% Calculate mean doses in all wells 
@@ -108,7 +129,7 @@ wells = {};
 
 % Positions in reference with the center of the first spot
 Xpos = well2wellDist_cm*(0:(-1):(-(NX-1)));
-Ypos = well2wellDist_cm*(0:(NY-1));
+Ypos = well2wellDist_cm*(0:(-1):(-(NY-1)));
 [x,y] = meshgrid(Xpos, Ypos);
 
 Xwells = x(~isnan(plateDose(:)));
