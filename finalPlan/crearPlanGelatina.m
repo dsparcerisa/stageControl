@@ -50,7 +50,7 @@ doseSigma = F.c1 / sqrt(2);
 
 %% Create plan
 deltaXY = doseSigma * 1.9;
-I_FC1 = 0.1; % nA
+I_FC1 = 1; % nA
 I_factor = 0.86; % Medir de nuevo
 %PP_factor = 0.04; % PP2capas
 PP_factor = 1;
