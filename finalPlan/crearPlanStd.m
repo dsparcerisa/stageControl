@@ -2,11 +2,11 @@ clearvars -except COMStage COMShutter
 %%
 modo = 1; % 1) placa, 2) cubeta
 
-% sigmaPoly_sinPP = [0.0097 0.24 0]; % settings 5 feb
-% sigmaPoly_sinPP = [0.0097 0.24 0]; % settings 5 feb
+% sigmaPoly_sinPP = [0.0097 0.24 0]; % settings 5 feb (3 MeV)
+% sigmaPoly_sinPP = [0.0097 0.24 0]; % settings 5 feb (3 MeV)
 
-% sigmaPoly_conPP = [0 0.26 0.63]; % settings 5 feb
-sigmaPoly_conPP = [0 0.24 0.76]; % settings 6 feb
+% sigmaPoly_conPP = [0 0.26 0.63]; % settings 5 feb (3 MeV)
+sigmaPoly_conPP = [0 0.24 0.76]; % settings 6 feb (3 MeV)
 
 
 %% Abrir la GUI
