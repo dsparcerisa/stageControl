@@ -6,6 +6,8 @@
 
 stageLimits = [-10.3 0.3 -9.93 0.7 -7.5 -1]; % DEFINE!!
 
+%% Elegir modo
+modo = 1; % 1) placa, 2) cubeta
 
 %% Alinear en posición 0 y medir la distancia (ANOTAR!)
 
