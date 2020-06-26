@@ -1,7 +1,7 @@
 % openInstruments
 
 %% Cargar el plan de calibración de RC;
-HuevoPlanPath = 'plans/plan_huevo_feb17_prueba.txt'; 
+HuevoPlanPath = 'plans/plan_huevo_feb18.txt'; 
 
 HuevoPlan = readPlan(HuevoPlanPath);
 

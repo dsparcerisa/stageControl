@@ -6,17 +6,17 @@ clearvars -except COMStage COMShutter
 % sigmaPoly_conPP = [0 0.26 0.63]; % settings 5 feb (3 MeV)
 % sigmaPoly_conPP = [0 0.24 0.76]; % settings 6 feb (3 MeV)
 
-sigmaPoly_feb17 = [0 0 2.5]; % Tentative 17 feb
+sigmaPoly_feb18 = [0 0 2.5]; % Tentative 17 feb
 
 %% Abrir la GUI
 % stageControlStart(COMStage);
 
 %% Alinear en posición 0 y medir la distancia (ANOTAR!)
-distNarizAHolder_cm = 12; % TENTATIVO, medir en posicion 0 mejor
+distNarizAHolder_cm = 5; % TENTATIVO, medir en posicion 0 mejor
 
 % Create material list
 Material = {'Air'; 'Copper'; 'Air'; 'Water'};
-Thickness_cm = [4; 0.0020; 8; 0.1];
+Thickness_cm = [4; 0.0020; 7; 0.1];
 z = sum(Thickness_cm(1:(end-1)));
 materialTable = table(Material, Thickness_cm);
 
@@ -25,7 +25,7 @@ materialTable = table(Material, Thickness_cm);
 % Anchura shutter: 27 mm;
 % GELATINA:
 
-plateDose = 100;
+plateDose = 10;
 NX = 1; NY = 1;
 well2wellDist_cm = 1;
 showPlate(plateDose)
@@ -43,15 +43,15 @@ sizeY = 30;
 sigmaX = 0.001; % REVISAR
 sigmaY = 0.001; % REVISAR
 N0 = createGaussProfile(dxy, dxy, sizeX, sizeY, sigmaX, sigmaY);
-doseSlice = getDoseMap_ThickTarget(E0, Nprot, materialTable, N0, sigmaPoly_feb17);
+doseSlice = getDoseMap_ThickTarget(E0, Nprot, materialTable, N0, sigmaPoly_feb18);
 Xsum = sum(doseSlice.data, 2);
 F = fit((doseSlice.getAxisValues('X'))', Xsum, 'gauss1', 'StartPoint', [max(Xsum) 0 1]);
 doseSigma = F.c1 / sqrt(2);
 
 %% Create plan
 deltaXY = doseSigma * 1.9;
-I_FC1 = 1; % nA
-I_factor = 0.86; % Medir de nuevo
+I_FC1 = 0.020; % nA
+I_factor = 0.96; % Medido por Andrea a 8 MeV
 %PP_factor = 0.04; % PP2capas
 PP_factor = 1;
 
@@ -68,17 +68,17 @@ plan.codFiltro = '1';
 plan.E = E0;
 
 
-plan.Z = -(z-distNarizAGelatina_cm)*ones(size(plan.X));
+plan.Z = -(z-distNarizAHolder_cm)*ones(size(plan.X));
 plan.I = I_FC1;
 scatter(plan.X(:), plan.Y(:), 100, plan.Q(:))
 set(gca, 'XDir', 'reverse', 'YDir', 'reverse');
-dose =  getDoseFromPlan_ThickTarget(CartesianGrid2D(N0), plan, N0, I_factor, materialTable, sigmaPoly_feb17);
+dose =  getDoseFromPlan_ThickTarget(CartesianGrid2D(N0), plan, N0, I_factor, materialTable, sigmaPoly_feb18);
 figure;
 dose.plotSlice
 set(gca, 'Ydir', 'reverse', 'Xdir', 'reverse')
 
 %% Save plan
-writePlan(plan, 'plans/plan_huevo_feb17_prueba.txt'); % Z = 10, 80 pA
+writePlan(plan, 'plans/plan_huevo_feb18.txt'); % Z = 10, 80 pA
 
 %% Calculate mean doses in all wells 
 wellDiam = 6.35; % mm
